@@ -181,33 +181,40 @@ def logout():
 
 
 window = Tk()
+
+# window settings
 window.title('Shaaban\'s Industries')
 window.geometry('400x300')
 window.resizable(False, False)
 window.minsize(width=400,height=300)
 
+# global variables
 userid_var = StringVar()
 apikey_var = StringVar()
 Checkbox_keep_logedin = IntVar()
   
-
+# header
 header = Frame(window, relief='sunken')
 header.pack(side=TOP,  expand=False)
 border = Frame(window, width=1500, height=3, bg=None)
 border.place(x=0, y=35)
 
+# earned - spendable
 Earned = Label(master=header, text='', font=('Roboto', 12))
 Earned.grid(row=0,column=0, padx=55, pady=5)
 Spendable = Label(master=header, text='',bd='0', font=('Roboto', 12))
 Spendable.grid(sticky = W, column=2,row=0)
 
 
+# logout
 logout_btn = Button(text='', command=logout)
 logout_btn.place(x=250, y=235)
 
+# UI login
 userid_label = Label(window, text='user id:')
 userid_entry = Entry(window, textvariable=userid_var,
                      font=('calibre', 10, 'normal'))
+
 apikey_label = Label(window, text='user api key:')
 apikey_entry = Entry(window, textvariable=apikey_var,
                      font=('calibre', 10, 'normal'))
@@ -221,16 +228,18 @@ apikey_label.pack()
 apikey_entry.pack()
 login_checkbox.pack()
 
+# error label
 errorlabel = Label(window, text='', fg='red', bg=None, font=('Roboto', 12))
 errorlabel.pack(pady=5)
 
-
+# exit btn
 exit_frame = Frame(window, bg='#1A7CD1')
 exit_frame.place(x=250, y=235)
 exit = Button(master=exit_frame, text='Exit', relief="groove",
               bg="white", bd='0', command=window.destroy)
 exit.pack(padx=2, pady=2)
 
+# submit info btn
 submit_frame = Frame(window, bg='#1A7CD1')
 submit_frame.place(x=310, y=235)
 submit_btn = Button(master=submit_frame, text='Submit',
