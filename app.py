@@ -3,15 +3,19 @@ import requests
 import base64
 import os
 from subprocess import call
-from tkinter import TOP, W, Button, Checkbutton, Entry, Frame, Label, StringVar, Tk,IntVar
+from tkinter import TOP, W, Button, Checkbutton, Entry, Frame, Label, StringVar, Tk, IntVar
 
+
+window = Tk()
 user_base = ''
+
 
 def submitData():
     userid = userid_var.get()
     apikey = apikey_var.get()
     if not userid or not apikey:
-        errorlabel.config(text='please enter the required information',fg='red')
+        errorlabel.config(
+            text='please enter the required information', fg='red')
 
     else:
         sample_string = str(userid)+':'+str(apikey)
@@ -38,6 +42,7 @@ def submitData():
         except:
             setinfo()
 
+
 def setinfo():
     # get request + set variables
     userid = userid_var.get()
@@ -49,7 +54,7 @@ def setinfo():
     global user_base
     user_base = base64_string
     headers = {
-        'Authorization': 'Basic '+ user_base,
+        'Authorization': 'Basic ' + user_base,
         'Host': 'picoworkers.com',
     }
     response = requests.get(
@@ -57,21 +62,21 @@ def setinfo():
     errorlabel.config(text='loading', fg='green')
     earned = response.json()['earned']
     spendable = response.json()['spendable']
-    
+
     # check login checkbox
     login_value = Checkbox_keep_logedin.get()
     if login_value == 1:
-        
+
         with open('login_data.pkl', 'wb') as file:
-            
+
             pickle.dump(login_value, file)
-            
+
         with open('user_base.pkl', 'wb') as file:
             pickle.dump(user_base, file)
     else:
         pass
-    
-    # destroy previous window 
+
+    # destroy previous window
     userid_entry.destroy()
     apikey_entry.destroy()
     userid_label.destroy()
@@ -81,7 +86,7 @@ def setinfo():
     submit_btn.destroy()
     errorlabel.destroy()
     exit_frame.destroy()
-    
+
     # buid new window
     header.config(width=200, height=20, bg="#FFF3CF")
     Earned.config(text=f'Earned: {earned}', bg='#FFF3CF')
@@ -90,16 +95,21 @@ def setinfo():
     exit_f = Frame(window, bg='#1A7CD1')
     exit_f.place(x=350, y=235)
     exit_btn = Button(master=exit_f, text='Exit', relief="groove",
-                bg="white", bd='0', command=window.destroy)
+                      bg="white", bd='0', command=window.destroy)
     exit_btn.pack(padx=2, pady=2)
     logout_btn.config(text='logout')
-    
-    # 
+    # copy to clipboard btn
+    copyToClipboard = Button(text='copyToClipboard ', command=(window.clipboard_clear(),
+                                                               window.clipboard_append('i can has clipboardz?')))
+    copyToClipboard.place(x=200, y=100)
+
+    #
     refreshdata()
+
 
 def refreshdata():
     headers = {
-        'Authorization': 'Basic '+ user_base,
+        'Authorization': 'Basic ' + user_base,
         'Host': 'picoworkers.com',
     }
     response = requests.get(
@@ -110,10 +120,11 @@ def refreshdata():
     Spendable.config(text=f'Spendable: {spendable}', bg='#FFF3CF')
     Spendable.after(1000, refreshdata)
 
+
 def setting_page_from_loggedin():
     global user_base
     headers = {
-        'Authorization': 'Basic '+ user_base,
+        'Authorization': 'Basic ' + user_base,
         'Host': 'picoworkers.com',
     }
     response = requests.get(
@@ -121,8 +132,8 @@ def setting_page_from_loggedin():
     errorlabel.config(text='loading', fg='green')
     earned = response.json()['earned']
     spendable = response.json()['spendable']
-    
-    # destroy previous window 
+
+    # destroy previous window
     userid_entry.destroy()
     apikey_entry.destroy()
     userid_label.destroy()
@@ -132,7 +143,7 @@ def setting_page_from_loggedin():
     submit_frame.destroy()
     submit_btn.destroy()
     exit_frame.destroy()
-    
+
     # buid new window
     header.config(width=200, height=20, bg="#FFF3CF")
     Earned.config(text=f'Earned: {earned}', bg='#FFF3CF')
@@ -141,12 +152,16 @@ def setting_page_from_loggedin():
     exit_f = Frame(window, bg='#1A7CD1')
     exit_f.place(x=350, y=235)
     exit_btn = Button(master=exit_f, text='Exit', relief="groove",
-                bg="white", bd='0', command=window.destroy)
+                      bg="white", bd='0', command=window.destroy)
     exit_btn.pack(padx=2, pady=2)
     logout_btn.config(text='logout')
-    
-    # 
+# copy to clipboard btn
+    copyToClipboard = Button(text='copyToClipboard ', command=(window.clipboard_clear(),
+                                                               window.clipboard_append('i can has clipboardz?')))
+    copyToClipboard.place(x=200, y=100)
+    #
     refreshdata()
+
 
 def check_login():
 
@@ -155,9 +170,10 @@ def check_login():
             global user_base
             user_base = pickle.load(file)
             setting_page_from_loggedin()
-            
+
     except IOError:
         pass
+
 
 def check_user_login_data():
     try:
@@ -168,7 +184,8 @@ def check_user_login_data():
             else:
                 pass
     except IOError:
-            pass
+        pass
+
 
 def logout():
     try:
@@ -176,34 +193,33 @@ def logout():
         os.remove('user_base.pkl')
     except:
         pass
-    window.destroy()    
+    window.destroy()
     call(["python", "app.py"])
 
-
-window = Tk()
 
 # window settings
 window.title('Shaaban\'s Industries')
 window.geometry('400x300')
+window.minsize(width=400, height=300)
 window.resizable(False, False)
-window.minsize(width=400,height=300)
 
 # global variables
 userid_var = StringVar()
 apikey_var = StringVar()
 Checkbox_keep_logedin = IntVar()
-  
+
 # header
 header = Frame(window, relief='sunken')
-header.pack(side=TOP,  expand=False)
-border = Frame(window, width=1500, height=3, bg=None)
+header.pack(side=TOP,  expand=False, fill="x")
+# header border-bottom
+border = Frame(window, width=50000, height=3, bg=None)
 border.place(x=0, y=35)
 
 # earned - spendable
 Earned = Label(master=header, text='', font=('Roboto', 12))
-Earned.grid(row=0,column=0, padx=55, pady=5)
-Spendable = Label(master=header, text='',bd='0', font=('Roboto', 12))
-Spendable.grid(sticky = W, column=2,row=0)
+Earned.grid(row=0, column=0, padx=55, pady=5)
+Spendable = Label(master=header, text='', bd='0', font=('Roboto', 12))
+Spendable.grid(sticky=W, column=2, row=0)
 
 
 # logout
@@ -219,14 +235,15 @@ apikey_label = Label(window, text='user api key:')
 apikey_entry = Entry(window, textvariable=apikey_var,
                      font=('calibre', 10, 'normal'))
 
-login_checkbox = Checkbutton(window, text = "keep me loggedin", variable = Checkbox_keep_logedin,
-                             onvalue = 1,offvalue = 0,height = 2,width = 20)
+login_checkbox = Checkbutton(window, text="keep me loggedin", variable=Checkbox_keep_logedin,
+                             onvalue=1, offvalue=0, height=2, width=20)
 
 userid_label.pack()
 userid_entry.pack()
 apikey_label.pack()
 apikey_entry.pack()
 login_checkbox.pack()
+
 
 # error label
 errorlabel = Label(window, text='', fg='red', bg=None, font=('Roboto', 12))
